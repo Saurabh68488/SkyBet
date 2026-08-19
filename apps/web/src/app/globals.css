@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ─── Base Styles ──────────────────────────── */
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-surface: #12122a;
+  --bg-surface-2: #1a1a3e;
+  --accent-cyan: #00d4ff;
+  --accent-red: #ff4757;
+  --accent-green: #00e676;
+  --accent-orange: #ffab00;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: #ffffff;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* ─── Glass Effect ─────────────────────────── */
+.glass {
+  background: rgba(18, 18, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.glass-strong {
+  background: rgba(18, 18, 42, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ─── Game Canvas ──────────────────────────── */
+.game-canvas-container {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0d2b 0%, #1a0a2e 50%, #0d0d2b 100%);
+}
+
+/* ─── Multiplier Text Glow ─────────────────── */
+.multiplier-glow {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.6),
+               0 0 40px rgba(0, 212, 255, 0.3),
+               0 0 60px rgba(0, 212, 255, 0.1);
+}
+
+.multiplier-crash {
+  text-shadow: 0 0 20px rgba(255, 71, 87, 0.8),
+               0 0 40px rgba(255, 71, 87, 0.4),
+               0 0 60px rgba(255, 71, 87, 0.2);
+}
+
+.multiplier-win {
+  text-shadow: 0 0 20px rgba(0, 230, 118, 0.6),
+               0 0 40px rgba(0, 230, 118, 0.3);
+}
+
+/* ─── Button Effects ───────────────────────── */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+.btn-glow:hover::before {
+  left: 100%;
+}
+
+/* ─── Card Hover Effect ────────────────────── */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Bet Status Colors ────────────────────── */
+.status-won { color: #00e676; }
+.status-lost { color: #ff4757; }
+.status-pending { color: #ffab00; }
+.status-active { color: #00d4ff; }
+
+/* ─── Crash Point Colors ──────────────────── */
+.crash-low { color: #ff4757; }      /* < 2x */
+.crash-mid { color: #ffab00; }      /* 2x - 5x */
+.crash-high { color: #a855f7; }     /* 5x - 10x */
+.crash-mega { color: #00e676; }     /* > 10x */
+
+/* ─── Animations ───────────────────────────── */
+@keyframes countdown-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.countdown-pulse {
+  animation: countdown-pulse 1s ease-in-out infinite;
+}
+
+/* ─── Number Input Hide Arrows ─────────────── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ─── Transitions ──────────────────────────── */
+.transition-default {
+  transition: all 0.2s ease;
+}
+
+/* ─── Scrollbar Hide ──────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Tabular Numbers ─────────────────────── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

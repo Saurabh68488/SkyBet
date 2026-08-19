@@ -1,0 +1,30 @@
+{
+  "name": "skybet",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SkyBet - Real-time modular betting platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm run dev -w apps/server\" \"npm run dev -w apps/web\"",
+    "build": "npm run build -w packages/shared && npm run build -w apps/server && npm run build -w apps/web",
+    "db:generate": "npm run db:generate -w apps/server",
+    "db:migrate": "npm run db:migrate -w apps/server",
+    "db:seed": "npm run db:seed -w apps/server",
+    "db:setup": "npm run db:generate -w apps/server && npm run db:migrate -w apps/server && npm run db:seed -w apps/server",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  },
+  "allowScripts": {
+    "@nestjs/core@10.4.22": true,
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "prisma@5.22.0": true
+  }
+}

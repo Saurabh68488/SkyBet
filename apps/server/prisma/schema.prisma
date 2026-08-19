@@ -1,0 +1,207 @@
+// ============================================
+// SkyBet - Prisma Schema (SQLite)
+// ============================================
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ────────────────────────────────────
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  password      String
+  plainPassword String?
+  name          String
+  phone         String?
+  role          String   @default("PLAYER")
+  status        String   @default("ACTIVE")
+  playerId      String   @unique @default(cuid())
+  wallet        Wallet?
+  bets          Bet[]
+  sessions      Session[]
+  logs            Log[]
+  paymentRequests PaymentRequest[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Wallet ───────────────────────────────────
+model Wallet {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  balance      Decimal       @default(0)
+  transactions Transaction[]
+  updatedAt    DateTime      @updatedAt
+}
+
+// ─── Transactions ─────────────────────────────
+model Transaction {
+  id            String   @id @default(uuid())
+  walletId      String
+  wallet        Wallet   @relation(fields: [walletId], references: [id])
+  amount        Decimal
+  type          String   // DEPOSIT, WITHDRAWAL, BET_PLACE, BET_WIN, BET_REFUND, COMMISSION, MANUAL_ADJUST
+  status        String   @default("COMPLETED")
+  balanceBefore Decimal
+  balanceAfter  Decimal
+  referenceId   String?
+  note          String?
+  createdBy     String?
+  createdAt     DateTime @default(now())
+}
+
+// ─── Game Rounds ──────────────────────────────
+model GameRound {
+  id          String   @id @default(uuid())
+  roundNumber Int
+  gameType    String   @default("AVIATION")
+  crashPoint  Decimal
+  status      String   @default("WAITING")
+  isForced    Boolean  @default(false)
+  totalBets   Decimal  @default(0)
+  totalPayouts Decimal @default(0)
+  commission  Decimal  @default(0)
+  startedAt   DateTime?
+  crashedAt   DateTime?
+  bets        Bet[]
+  createdAt   DateTime @default(now())
+
+  @@unique([roundNumber, gameType])
+}
+
+// ─── Bets ─────────────────────────────────────
+model Bet {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  roundId     String
+  round       GameRound @relation(fields: [roundId], references: [id])
+  amount      Decimal
+  betSlot     Int      @default(1)
+  autoCashout Decimal?
+  cashoutAt   Decimal?
+  winAmount   Decimal?
+  status      String   @default("PENDING")
+  commission  Decimal  @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Forced Rounds ────────────────────────────
+model ForcedRound {
+  id          String   @id @default(uuid())
+  roundNumber Int
+  crashPoint  Decimal
+  gameType    String   @default("AVIATION")
+  executed    Boolean  @default(false)
+  createdBy   String
+  createdAt   DateTime @default(now())
+}
+
+// ─── Game Config ──────────────────────────────
+model GameConfig {
+  id             String   @id @default(uuid())
+  gameType       String   @unique
+  name           String
+  description    String?
+  enabled        Boolean  @default(true)
+  visible        Boolean  @default(true)
+  minBet         Decimal  @default(10)
+  maxBet         Decimal  @default(1000000)
+  minMultiplier  Decimal  @default(1.0)
+  maxMultiplier  Decimal  @default(1000.0)
+  settings       String?  // JSON string for game-specific settings
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── Platform Settings ────────────────────────
+model PlatformSettings {
+  id                String  @id @default("default")
+  commissionRate    Decimal @default(0.10)
+  countdownDuration Int     @default(15)
+  maintenanceMode   Boolean @default(false)
+  qrCodeData        String? // Base64 encoded QR code image
+}
+
+// ─── Logs ─────────────────────────────────────
+model Log {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  category  String   // AUTH, BET, CASHOUT, BALANCE, ADMIN, SYSTEM, GAME
+  details   String?  // JSON string
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+// ─── Sessions ─────────────────────────────────
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  ip        String?
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ─── Payment Requests ─────────────────────────
+model PaymentRequest {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  type            String    // DEPOSIT or WITHDRAW
+  amount          Decimal
+  status          String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  // Deposit fields
+  playerTxnId     String?   // Transaction ID player submits after paying QR
+  // Withdraw fields
+  upiId           String?   // Player's UPI ID for withdrawal
+  // Admin fields
+  adminTxnId      String?   // Transaction ID admin enters when paying withdrawal
+  adminNote       String?   // Reason for rejection or admin comment
+  processedBy     String?   // Admin user ID who processed
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ─── Ludo Game ────────────────────────────────
+model LudoRoom {
+  id          String       @id @default(uuid())
+  mode        String       // "2P" or "4P"
+  entryFee    Decimal
+  status      String       @default("WAITING") // WAITING, PLAYING, FINISHED
+  winnerId    String?      // 1st place userId
+  secondId    String?      // 2nd place userId (4P)
+  players     LudoPlayer[]
+  gameState   String?      // JSON: full board state
+  currentTurn Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model LudoPlayer {
+  id          String   @id @default(uuid())
+  roomId      String
+  room        LudoRoom @relation(fields: [roomId], references: [id])
+  userId      String?  // null for bots
+  playerName  String
+  color       String   // RED, BLUE, GREEN, YELLOW
+  isBot       Boolean  @default(false)
+  position    Int      @default(0) // finishing position (1,2,3,4) — 0 = still playing
+  payout      Decimal  @default(0)
+  createdAt   DateTime @default(now())
+}
