@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import {
-  Plane, Wallet, User, LogOut, Coins,
+  Plane, Wallet, User, LogOut,
   Gamepad2, Star, Users, TrendingUp, Loader2, ChevronRight, ArrowLeft
 } from 'lucide-react';
 
@@ -135,7 +135,7 @@ export default function HomePage() {
               <span className="hidden sm:inline">Wallet</span>
             </Link>
             <Link href="/wallet" className="flex items-center gap-1.5 bg-[#1a1a2e] rounded-lg px-3 py-2 border border-white/5 hover:border-amber-500/20 transition-all">
-              <Coins className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 font-bold text-sm">₹</span>
               <span className="text-white font-bold text-sm tabular-nums">{balance.toFixed(2)}</span>
             </Link>
             {/* User info — desktop only */}

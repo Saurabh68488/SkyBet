@@ -178,7 +178,7 @@ export default function LudoGameClient() {
           <h1 className="text-sm font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
             🎲 LUDO
           </h1>
-          <p className="text-[10px] text-gray-500">{mode} • {entryFee} Coins</p>
+          <p className="text-[10px] text-gray-500">{mode} • ₹{entryFee}</p>
         </div>
         <div className="flex items-center gap-1">
           {connected ? (

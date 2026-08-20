@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import {
-  Plane, ArrowLeft, Loader2, Coins, ArrowUpRight, ArrowDownRight,
+  Plane, ArrowLeft, Loader2, ArrowUpRight, ArrowDownRight,
   Clock, CheckCircle2, XCircle, Filter, Plus, ArrowDownToLine, X,
   AlertTriangle, ShieldCheck, Info, Wallet, History, ChevronDown, ChevronUp
 } from 'lucide-react';
@@ -153,9 +153,8 @@ export default function WalletPage() {
           </div>
           {/* Balance */}
           <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1a1a2e] rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 border border-white/5">
-            <Coins className="w-4 h-4 text-amber-400" />
+            <span className="text-amber-400 font-bold">₹</span>
             <span className="text-white font-bold tabular-nums">{balance.toFixed(2)}</span>
-            <span className="text-gray-600 text-xs">coins</span>
           </div>
         </div>
       </header>
@@ -272,7 +271,7 @@ export default function WalletPage() {
               </button>
               <div className="flex items-center gap-2 justify-center text-[10px] text-gray-600">
                 <ShieldCheck className="w-3 h-3" />
-                <span>Your coins will be added within 48 hours after verification</span>
+                <span>Your balance will be added within 48 hours after verification</span>
               </div>
             </form>
           </div>
@@ -311,7 +310,7 @@ export default function WalletPage() {
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Available Balance</p>
                   <p className="text-2xl font-bold text-white flex items-center gap-2">
-                    <Coins className="w-5 h-5 text-amber-400" /> {balance.toFixed(2)}
+                    <span className="text-amber-400">₹</span>{balance.toFixed(2)}
                   </p>
                 </div>
                 <div className="text-right">

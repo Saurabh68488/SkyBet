@@ -180,9 +180,9 @@ let GameEngineService = class GameEngineService {
                 this.activeBets.set(bet.id, activeBet);
                 this.sendToUser(qb.userId, 'notification', {
                     type: 'success',
-                    message: `Queued bet placed: ${qb.amount} Coins (slot ${qb.betSlot})`,
+                    message: `Queued bet placed: ${qb.amount} ₹ (slot ${qb.betSlot})`,
                 });
-                this.logger.log(`Queued bet placed for ${qb.username}: ${qb.amount} Coins`);
+                this.logger.log(`Queued bet placed for ${qb.username}: ${qb.amount} ₹`);
             }
             catch (err) {
                 try {
@@ -364,7 +364,7 @@ let GameEngineService = class GameEngineService {
                 return { success: false, message: `Already queued a bet on slot ${betSlot} for next round.` };
             }
             if (amount < 10)
-                return { success: false, message: 'Minimum bet is 10 Coins.' };
+                return { success: false, message: 'Minimum bet is 10 ₹.' };
             try {
                 await this.walletService.debit(userId, amount, 'BET_PLACE', this.currentRoundId);
             }
@@ -374,7 +374,7 @@ let GameEngineService = class GameEngineService {
             this.nextRoundBets.push({ userId, username, amount, betSlot, autoCashout });
             const balance = await this.walletService.getBalance(userId);
             this.sendToUser(userId, 'player:balance', { balance });
-            this.sendToUser(userId, 'notification', { type: 'success', message: `Bet queued for next round: ${amount} Coins (slot ${betSlot})` });
+            this.sendToUser(userId, 'notification', { type: 'success', message: `Bet queued for next round: ${amount} ₹ (slot ${betSlot})` });
             return { success: true, message: 'Bet queued for next round' };
         }
         if (this.phase !== 'COUNTDOWN') {
@@ -389,7 +389,7 @@ let GameEngineService = class GameEngineService {
             }
         }
         if (amount < 10) {
-            return { success: false, message: 'Minimum bet is 10 Coins.' };
+            return { success: false, message: 'Minimum bet is 10 ₹.' };
         }
         try {
             await this.walletService.debit(userId, amount, 'BET_PLACE', this.currentRoundId);
@@ -424,11 +424,11 @@ let GameEngineService = class GameEngineService {
         this.sendToUser(userId, 'player:balance', { balance });
         this.sendToUser(userId, 'notification', {
             type: 'success',
-            message: `Bet placed: ${amount} Coins on slot ${betSlot}`,
+            message: `Bet placed: ${amount} ₹ on slot ${betSlot}`,
         });
         await this.logsService.log({
             userId,
-            action: `Placed bet: ${amount} Coins (slot ${betSlot})`,
+            action: `Placed bet: ${amount} ₹ (slot ${betSlot})`,
             category: 'BET',
             details: { amount, betSlot, autoCashout, roundNumber: this.currentRoundNumber },
         });
@@ -474,11 +474,11 @@ let GameEngineService = class GameEngineService {
         this.sendToUser(userId, 'player:balance', { balance });
         this.sendToUser(userId, 'notification', {
             type: 'success',
-            message: `Cashed out at ${multiplier.toFixed(2)}x! Won ${winAmount.toFixed(2)} Coins`,
+            message: `Cashed out at ${multiplier.toFixed(2)}x! Won ${winAmount.toFixed(2)} ₹`,
         });
         await this.logsService.log({
             userId,
-            action: `Cashed out at ${multiplier}x: won ${winAmount} Coins`,
+            action: `Cashed out at ${multiplier}x: won ${winAmount} ₹`,
             category: 'CASHOUT',
             details: { multiplier, winAmount, betSlot, roundNumber: this.currentRoundNumber },
         });

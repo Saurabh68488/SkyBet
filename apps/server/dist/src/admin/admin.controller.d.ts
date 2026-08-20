@@ -16,7 +16,7 @@ export declare class AdminController {
     constructor(adminService: AdminService, usersService: UsersService, walletService: WalletService, gameEngine: GameEngineService, jetxEngine: JetXEngineService, logsService: LogsService, prisma: PrismaService);
     getDashboard(): Promise<{
         currentRound: number;
-        gamePhase: "WAITING" | "COUNTDOWN" | "RUNNING" | "CRASHED";
+        gamePhase: "CRASHED" | "WAITING" | "COUNTDOWN" | "RUNNING";
         onlineUsers: number;
         totalUsers: number;
         activeUsers: number;
@@ -48,9 +48,9 @@ export declare class AdminController {
                 balance: number;
             } | null;
             id: string;
+            status: string;
             createdAt: Date;
             name: string;
-            status: string;
             updatedAt: Date;
             username: string;
             phone: string | null;
@@ -66,9 +66,9 @@ export declare class AdminController {
             balance: number;
         } | null;
         id: string;
+        status: string;
         createdAt: Date;
         name: string;
-        status: string;
         updatedAt: Date;
         username: string;
         phone: string | null;
@@ -80,9 +80,9 @@ export declare class AdminController {
             balance: number;
         } | null;
         id: string;
+        status: string;
         createdAt: Date;
         name: string;
-        status: string;
         updatedAt: Date;
         username: string;
         phone: string | null;
@@ -117,13 +117,13 @@ export declare class AdminController {
             balanceBefore: number;
             balanceAfter: number;
             id: string;
-            createdBy: string | null;
-            createdAt: Date;
-            status: string;
             walletId: string;
             type: string;
+            status: string;
             referenceId: string | null;
             note: string | null;
+            createdBy: string | null;
+            createdAt: Date;
         }[];
         total: number;
         page: number;
@@ -138,11 +138,11 @@ export declare class AdminController {
     getForcedRounds(): Promise<{
         crashPoint: number;
         id: string;
+        createdBy: string;
+        createdAt: Date;
         roundNumber: number;
         gameType: string;
         executed: boolean;
-        createdBy: string;
-        createdAt: Date;
     }[]>;
     deleteForcedRound(id: string, req: any): Promise<{
         message: string;
@@ -156,11 +156,11 @@ export declare class AdminController {
     jetxGetForcedRounds(): Promise<{
         crashPoint: number;
         id: string;
+        createdBy: string;
+        createdAt: Date;
         roundNumber: number;
         gameType: string;
         executed: boolean;
-        createdBy: string;
-        createdAt: Date;
     }[]>;
     jetxDeleteForcedRound(id: string, req: any): Promise<{
         message: string;

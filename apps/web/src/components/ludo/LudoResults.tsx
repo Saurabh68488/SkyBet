@@ -49,7 +49,7 @@ export default function LudoResults({ results, myName, onPlayAgain }: LudoResult
               isWinner ? 'bg-yellow-500/20 border border-yellow-500/30' : 'bg-gray-500/20 border border-gray-500/30'
             }`}>
               <span className={`text-lg font-black ${isWinner ? 'text-yellow-400' : 'text-gray-300'}`}>
-                +{myResult.payout} coins
+                +₹{myResult.payout}
               </span>
             </div>
           )}

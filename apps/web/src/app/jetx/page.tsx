@@ -13,7 +13,7 @@ import JetXCanvas from '@/components/jetx/JetXCanvas';
 import JetXBetPanel from '@/components/jetx/JetXBetPanel';
 import JetXLiveBets from '@/components/jetx/JetXLiveBets';
 import JetXHistory from '@/components/jetx/JetXHistory';
-import { Rocket, Wallet, Coins, ArrowLeft, Users as UsersIcon, X } from 'lucide-react';
+import { Rocket, Wallet, ArrowLeft, Users as UsersIcon, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function JetXPage() {
@@ -65,8 +65,8 @@ export default function JetXPage() {
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 bg-[#1e293b] rounded-full px-2.5 py-1 border border-yellow-500/10">
-            <Coins size={12} className="text-yellow-400" />
-            <span className="text-[11px] font-bold text-yellow-400 tabular-nums">{balance.toFixed(2)} <span className="text-[9px] text-gray-500">INR</span></span>
+            <span className="text-yellow-400 font-bold text-sm">₹</span>
+            <span className="text-[11px] font-bold text-yellow-400 tabular-nums">{balance.toFixed(2)}</span>
           </div>
           <Link href="/wallet" className="text-gray-400 hover:text-white transition-colors" title="Wallet">
             <Wallet size={15} />
@@ -88,11 +88,11 @@ export default function JetXPage() {
         {/* Center: Canvas + Bet Panels */}
         <main className="flex-1 flex flex-col min-w-0 min-h-0">
           {/* Canvas */}
-          <div className="flex-1 relative min-h-0 border border-white/5 rounded-sm m-1 overflow-hidden">
+          <div className="flex-1 relative min-h-[45vh] sm:min-h-0 border border-white/5 rounded-sm m-1 overflow-hidden">
             {/* Prize fund banner (decoration) */}
             <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-[#1a1a2e]/90 rounded-lg px-2.5 py-1 border border-yellow-500/20">
               <span className="text-[8px] text-yellow-500 font-bold uppercase">Prize Pool</span>
-              <span className="text-[11px] text-white font-bold">{(state.bets.reduce((s, b) => s + b.amount, 0)).toLocaleString()} INR</span>
+              <span className="text-[11px] text-white font-bold">₹{(state.bets.reduce((s, b) => s + b.amount, 0)).toLocaleString()}</span>
             </div>
 
             {/* Round info */}
@@ -135,7 +135,7 @@ export default function JetXPage() {
               return (
                 <div key={bet.id} className={`flex items-center justify-between px-3 py-[3px] text-[11px] border-b border-white/[0.03] ${isWon ? 'bg-green-500/[0.05]' : ''}`}>
                   <span className="text-gray-400 w-[70px] truncate">{name}</span>
-                  <span className="text-gray-300 tabular-nums">{bet.amount.toLocaleString()} <span className="text-[8px] text-gray-600">INR</span></span>
+                  <span className="text-gray-300 tabular-nums">₹{bet.amount.toLocaleString()}</span>
                   <span className="w-[70px] text-right">
                     {isWon ? (
                       <span className="text-green-400 tabular-nums">{(bet.winAmount || 0).toLocaleString()}</span>

@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useGameGuard } from '@/hooks/useGameGuard';
 import { io, Socket } from 'socket.io-client';
 import {
-  ArrowLeft, Users, Coins, Trophy, Crown, Medal, Loader2, Dice1, Dice2, Dice3, Dice4, Dice5, Dice6
+  ArrowLeft, Users, Trophy, Crown, Medal, Loader2, Dice1, Dice2, Dice3, Dice4, Dice5, Dice6
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -97,7 +97,7 @@ export default function LudoLobbyPage() {
             🎲 LUDO
           </h1>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/20 text-amber-400 border border-amber-500/20 text-xs font-bold">
-            <Coins size={12} /> {(balance || 0).toFixed(0)}
+            ₹{(balance || 0).toFixed(0)}
           </div>
         </div>
       </header>
@@ -113,7 +113,7 @@ export default function LudoLobbyPage() {
               </div>
               <h2 className="text-xl font-bold mb-2">Finding Players...</h2>
               <p className="text-gray-400 text-sm mb-4">
-                {selectedMode} Match • {selectedFee} Coins
+                {selectedMode} Match • ₹{selectedFee}
               </p>
               <div className="text-4xl font-black text-purple-400 mb-4 tabular-nums">
                 {countdown}s
@@ -295,7 +295,7 @@ export default function LudoLobbyPage() {
               {matchmaking ? (
                 <><Loader2 size={20} className="animate-spin" /> Finding Match...</>
               ) : (
-                <><Users size={20} /> FIND MATCH — {selectedFee} COINS</>
+                <><Users size={20} /> FIND MATCH — ₹{selectedFee}</>
               )}
             </button>
             <p className="text-center text-[10px] text-gray-500 mt-2">

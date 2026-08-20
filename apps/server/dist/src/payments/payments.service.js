@@ -43,7 +43,7 @@ let PaymentsService = class PaymentsService {
             category: 'BALANCE',
             details: { requestId: request.id, amount, playerTxnId },
         });
-        return { id: request.id, message: 'Deposit request submitted. Your coins will be added within 48 hours after verification.' };
+        return { id: request.id, message: 'Deposit request submitted. Your ₹ will be added within 48 hours after verification.' };
     }
     async createWithdraw(userId, amount, upiId) {
         if (amount < 100)
@@ -53,7 +53,7 @@ let PaymentsService = class PaymentsService {
         }
         const balance = await this.walletService.getBalance(userId);
         if (balance < amount) {
-            throw new common_1.BadRequestException(`Insufficient balance. You have ${balance} coins.`);
+            throw new common_1.BadRequestException(`Insufficient balance. You have ${balance} ₹.`);
         }
         const request = await this.prisma.paymentRequest.create({
             data: {

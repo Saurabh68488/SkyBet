@@ -14,7 +14,7 @@ import BetPanel from '@/components/game/BetPanel';
 import LiveBets from '@/components/game/LiveBets';
 import GameHistory from '@/components/game/GameHistory';
 import HowToPlay from '@/components/game/HowToPlay';
-import { Plane, Wallet, LogOut, Shield, Coins, Users as UsersIcon, X, ArrowLeft } from 'lucide-react';
+import { Plane, Wallet, LogOut, Shield, Users as UsersIcon, X, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 // ── Fake bot names ──
@@ -132,7 +132,7 @@ export default function GamePage() {
         {/* Right: Balance + icons */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 bg-[#1e293b] rounded-full px-2.5 py-1">
-            <Coins size={12} className="text-amber-400" />
+            <span className="text-amber-400 font-bold text-sm">₹</span>
             <span className="text-[11px] font-bold text-amber-400 tabular-nums">{balance.toFixed(2)}</span>
           </div>
           <Link href="/wallet" className="text-gray-400 hover:text-white transition-colors" title="Wallet">

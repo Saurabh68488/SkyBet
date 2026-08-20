@@ -201,7 +201,7 @@ export class LudoEngineService implements OnModuleInit {
     // Start 15s matchmaking timer
     this.startMatchmakingTimer(room.id, mode);
 
-    this.logger.log(`Room ${room.id} created: ${mode} ${entryFee} coins by ${username}`);
+    this.logger.log(`Room ${room.id} created: ${mode} ${entryFee} ₹ by ${username}`);
     return { roomId: room.id };
   }
 
@@ -808,7 +808,7 @@ export class LudoEngineService implements OnModuleInit {
           await this.walletService.credit(p.userId, payout, 'BET_WIN', roomId);
           this.sendToUser(p.userId, 'notification', {
             type: 'success',
-            message: `Ludo: You won ${payout} coins! (${p.finishOrder === 1 ? '1st' : '2nd'} place)`,
+            message: `Ludo: You won ${payout} ₹! (${p.finishOrder === 1 ? '1st' : '2nd'} place)`,
           });
         } catch (e) {
           this.logger.error(`Failed to credit ${payout} to ${p.userId}: ${e}`);

@@ -117,7 +117,7 @@ let WalletService = class WalletService {
             : await this.debit(userId, amount, 'MANUAL_ADJUST', undefined, note || `Admin adjustment: -${amount}`);
         await this.logsService.log({
             userId: adminId,
-            action: `${adjustType === 'add' ? 'Added' : 'Removed'} ${amount} Coins for user`,
+            action: `${adjustType === 'add' ? 'Added' : 'Removed'} ${amount} ₹ for user`,
             category: 'BALANCE',
             details: { targetUserId: userId, amount, adjustType, newBalance, note },
         });

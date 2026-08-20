@@ -77,7 +77,7 @@ export default function JetXLiveBets({ bets }: { bets: JetXBet[] }) {
               >
                 <span className="text-gray-400 truncate">{displayName}</span>
                 <span className="text-right text-gray-300 tabular-nums">
-                  {bet.amount.toLocaleString()} <span className="text-[8px] text-gray-600">INR</span>
+                  ₹{bet.amount.toLocaleString()}
                 </span>
                 <span className="text-right text-gray-500 tabular-nums">
                   {isWon && bet.cashoutAt ? `${bet.cashoutAt.toFixed(2)}x` : '—'}

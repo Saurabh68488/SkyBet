@@ -40,7 +40,7 @@ export class PaymentsService {
       details: { requestId: request.id, amount, playerTxnId },
     });
 
-    return { id: request.id, message: 'Deposit request submitted. Your coins will be added within 48 hours after verification.' };
+    return { id: request.id, message: 'Deposit request submitted. Your ₹ will be added within 48 hours after verification.' };
   }
 
   // ─── PLAYER: Create Withdrawal Request ─────────
@@ -53,7 +53,7 @@ export class PaymentsService {
     // Check balance
     const balance = await this.walletService.getBalance(userId);
     if (balance < amount) {
-      throw new BadRequestException(`Insufficient balance. You have ${balance} coins.`);
+      throw new BadRequestException(`Insufficient balance. You have ${balance} ₹.`);
     }
 
     const request = await this.prisma.paymentRequest.create({
@@ -194,7 +194,7 @@ export class PaymentsService {
 
     // Process based on type
     if (request.type === 'DEPOSIT') {
-      // Add coins to player wallet
+      // Add ₹ to player wallet
       await this.walletService.credit(
         request.userId,
         Number(request.amount),
@@ -203,7 +203,7 @@ export class PaymentsService {
         `Deposit approved (Player Txn: ${request.playerTxnId})`,
       );
     } else if (request.type === 'WITHDRAW') {
-      // Deduct coins from player wallet
+      // Deduct ₹ from player wallet
       await this.walletService.debit(
         request.userId,
         Number(request.amount),

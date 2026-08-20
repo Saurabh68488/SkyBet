@@ -135,12 +135,12 @@ export default function JetXBetPanel({ slot, phase, multiplier, onPlaceBet, onCa
           className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-bold py-3 rounded-xl text-sm transition-all active:scale-95 animate-pulse"
         >
           <div className="text-[10px] opacity-80">COLLECT</div>
-          <div className="text-lg font-black">{currentWin.toFixed(2)} INR</div>
+          <div className="text-lg font-black">₹{currentWin.toFixed(2)}</div>
         </button>
       ) : queuedForNext ? (
         <button disabled className="w-full bg-yellow-900/30 border border-yellow-500/20 text-yellow-400 font-bold py-3 rounded-xl text-sm">
           <div className="text-[10px]">QUEUED FOR NEXT ROUND</div>
-          <div className="text-lg font-black">{amount.toFixed(2)} INR</div>
+          <div className="text-lg font-black">₹{amount.toFixed(2)}</div>
         </button>
       ) : (
         <button
@@ -159,16 +159,16 @@ export default function JetXBetPanel({ slot, phase, multiplier, onPlaceBet, onCa
           {hasBetInPlay ? (
             <>
               <div className="text-[10px] opacity-80">WAITING</div>
-              <div className="text-lg font-black">{myBet.amount.toFixed(2)} INR</div>
+              <div className="text-lg font-black">₹{myBet.amount.toFixed(2)}</div>
             </>
           ) : isWon && canBet ? (
             <>
-              <div className="text-lg font-black">{amount.toFixed(2)} INR</div>
+              <div className="text-lg font-black">₹{amount.toFixed(2)}</div>
               <div className="text-[10px] opacity-80">BET NEXT ROUND</div>
             </>
           ) : (
             <>
-              <div className="text-lg font-black">{amount.toFixed(2)} INR</div>
+              <div className="text-lg font-black">₹{amount.toFixed(2)}</div>
               <div className="text-[10px] opacity-80">{isNextRound ? 'BET NEXT ROUND' : 'BET'}</div>
             </>
           )}
@@ -179,10 +179,11 @@ export default function JetXBetPanel({ slot, phase, multiplier, onPlaceBet, onCa
       {isWon && !queuedForNext && (
         <div className="mt-1 text-center bg-green-900/20 rounded-lg py-1 border border-green-500/10">
           <span className="text-green-400 text-[10px] font-bold">
-            WON {myBet.cashoutAt?.toFixed(2)}x → {(myBet.winAmount || 0).toFixed(2)} INR
+            WON {myBet.cashoutAt?.toFixed(2)}x → ₹{(myBet.winAmount || 0).toFixed(2)}
           </span>
         </div>
       )}
+
     </div>
   );
 }

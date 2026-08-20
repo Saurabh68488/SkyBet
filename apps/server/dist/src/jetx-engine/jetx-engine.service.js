@@ -213,7 +213,7 @@ let JetXEngineService = class JetXEngineService {
                     cashoutAt: null, winAmount: null, status: 'PENDING',
                 };
                 this.activeBets.set(bet.id, activeBet);
-                this.sendToUser(qb.userId, 'notification', { type: 'success', message: `JetX queued bet placed: ${qb.amount} Coins` });
+                this.sendToUser(qb.userId, 'notification', { type: 'success', message: `JetX queued bet placed: ${qb.amount} ₹` });
             }
             catch (err) {
                 try {
@@ -380,7 +380,7 @@ let JetXEngineService = class JetXEngineService {
             if (alreadyQueued)
                 return { success: false, message: `Already queued on slot ${betSlot}.` };
             if (amount < 10)
-                return { success: false, message: 'Minimum bet is 10 Coins.' };
+                return { success: false, message: 'Minimum bet is 10 ₹.' };
             try {
                 await this.walletService.debit(userId, amount, 'BET_PLACE', this.currentRoundId);
             }
@@ -390,7 +390,7 @@ let JetXEngineService = class JetXEngineService {
             this.nextRoundBets.push({ userId, username, amount, betSlot, autoCashout });
             const balance = await this.walletService.getBalance(userId);
             this.sendToUser(userId, 'player:balance', { balance });
-            this.sendToUser(userId, 'notification', { type: 'success', message: `JetX bet queued: ${amount} Coins` });
+            this.sendToUser(userId, 'notification', { type: 'success', message: `JetX bet queued: ${amount} ₹` });
             return { success: true, message: 'Bet queued for next round' };
         }
         if (this.phase !== 'COUNTDOWN')
@@ -403,7 +403,7 @@ let JetXEngineService = class JetXEngineService {
             }
         }
         if (amount < 10)
-            return { success: false, message: 'Minimum bet is 10 Coins.' };
+            return { success: false, message: 'Minimum bet is 10 ₹.' };
         try {
             await this.walletService.debit(userId, amount, 'BET_PLACE', this.currentRoundId);
         }
@@ -421,7 +421,7 @@ let JetXEngineService = class JetXEngineService {
         this.broadcastBets();
         const balance = await this.walletService.getBalance(userId);
         this.sendToUser(userId, 'player:balance', { balance });
-        this.sendToUser(userId, 'notification', { type: 'success', message: `JetX bet placed: ${amount} Coins` });
+        this.sendToUser(userId, 'notification', { type: 'success', message: `JetX bet placed: ${amount} ₹` });
         return { success: true, message: 'Bet placed', bet: activeBet };
     }
     async processCashout(userId, betSlot, forcedMultiplier) {
@@ -450,7 +450,7 @@ let JetXEngineService = class JetXEngineService {
         this.broadcastBets();
         const balance = await this.walletService.getBalance(userId);
         this.sendToUser(userId, 'player:balance', { balance });
-        this.sendToUser(userId, 'notification', { type: 'success', message: `JetX cashout at ${multiplier.toFixed(2)}x! Won ${winAmount.toFixed(2)} Coins` });
+        this.sendToUser(userId, 'notification', { type: 'success', message: `JetX cashout at ${multiplier.toFixed(2)}x! Won ${winAmount.toFixed(2)} ₹` });
         return { success: true, message: 'Cashout successful' };
     }
     generateFakeBets() {

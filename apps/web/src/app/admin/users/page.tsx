@@ -293,11 +293,11 @@ export default function AdminUsersPage() {
               <div className="grid grid-cols-2 gap-2">
                 <button type="button" onClick={() => setAdjustForm({ ...adjustForm, type: 'add' })}
                   className={`py-2 rounded-xl text-sm font-medium transition-all ${adjustForm.type === 'add' ? 'bg-accent-green/20 text-accent-green border border-accent-green/30' : 'bg-sky-surface-2 text-gray-400 border border-sky-border'}`}>
-                  + Add Coins
+                  + Add Balance
                 </button>
                 <button type="button" onClick={() => setAdjustForm({ ...adjustForm, type: 'remove' })}
                   className={`py-2 rounded-xl text-sm font-medium transition-all ${adjustForm.type === 'remove' ? 'bg-accent-red/20 text-accent-red border border-accent-red/30' : 'bg-sky-surface-2 text-gray-400 border border-sky-border'}`}>
-                  - Remove Coins
+                  - Remove Balance
                 </button>
               </div>
               <input type="number" value={adjustForm.amount} onChange={(e) => setAdjustForm({ ...adjustForm, amount: Number(e.target.value) })} placeholder="Amount" min={1} required
@@ -305,7 +305,7 @@ export default function AdminUsersPage() {
               <input value={adjustForm.note} onChange={(e) => setAdjustForm({ ...adjustForm, note: e.target.value })} placeholder="Note (optional)"
                 className="w-full px-4 py-2.5 rounded-xl bg-sky-surface-2 border border-sky-border text-sm focus:outline-none focus:border-accent-cyan/50" />
               <button type="submit" className={`w-full py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-all text-white ${adjustForm.type === 'add' ? 'bg-gradient-to-r from-accent-green to-emerald-600' : 'bg-gradient-to-r from-accent-red to-red-700'}`}>
-                {adjustForm.type === 'add' ? 'Add' : 'Remove'} {adjustForm.amount} Coins
+                {adjustForm.type === 'add' ? 'Add' : 'Remove'} ₹{adjustForm.amount}
               </button>
             </form>
           </div>
