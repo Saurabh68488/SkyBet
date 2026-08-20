@@ -298,30 +298,42 @@ export class JetXEngineService implements OnModuleInit {
   private async tick() {
     if (this.phase !== 'RUNNING') return;
 
-    const multiplier = this.getMultiplier();
-    const elapsed = Date.now() - this.startTime;
+    try {
+      const multiplier = this.getMultiplier();
+      const elapsed = Date.now() - this.startTime;
 
-    // Auto-cashouts
-    for (const [_, bet] of this.activeBets) {
-      const acVal = bet.autoCashout ? Number(bet.autoCashout) : 0;
-      if (bet.status === 'ACTIVE' && acVal > 0 && multiplier >= acVal) {
-        await this.processCashout(bet.userId, bet.betSlot, acVal);
+      // Auto-cashouts
+      for (const [_, bet] of this.activeBets) {
+        const acVal = bet.autoCashout ? Number(bet.autoCashout) : 0;
+        if (bet.status === 'ACTIVE' && acVal > 0 && multiplier >= acVal) {
+          try {
+            await this.processCashout(bet.userId, bet.betSlot, acVal);
+          } catch (e) {
+            this.logger.error(`JetX auto-cashout error: ${e}`);
+          }
+        }
       }
-    }
 
-    // Fake cashouts
-    const prevActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
-    this.simulateFakeCashouts(multiplier);
-    if (this.fakeBets.filter(b => b.status === 'ACTIVE').length !== prevActive) {
-      this.broadcastBets();
-    }
+      // Fake cashouts
+      try {
+        const prevActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
+        this.simulateFakeCashouts(multiplier);
+        if (this.fakeBets.filter(b => b.status === 'ACTIVE').length !== prevActive) {
+          this.broadcastBets();
+        }
+      } catch (e) {
+        this.logger.error(`JetX fake cashout error: ${e}`);
+      }
 
-    if (!this.isRunning()) {
-      this.handleCrash();
-      return;
-    }
+      if (!this.isRunning()) {
+        this.handleCrash();
+        return;
+      }
 
-    this.broadcast('jetx:tick', { multiplier, elapsed });
+      this.broadcast('jetx:tick', { multiplier, elapsed });
+    } catch (e) {
+      this.logger.error(`JetX tick error: ${e}`);
+    }
   }
 
   private async handleCrash() {
@@ -330,46 +342,64 @@ export class JetXEngineService implements OnModuleInit {
 
     if (this.tickInterval) clearInterval(this.tickInterval);
     this.tickInterval = null;
-    this.crashFakeBets();
 
     const crashPoint = this.crashPoint;
     this.logger.log(`JetX Round ${this.currentRoundNumber} CRASHED at ${crashPoint}x`);
 
-    let totalBets = 0, totalPayouts = 0, totalCommission = 0;
+    // ALWAYS broadcast crash first
+    this.broadcast('jetx:crash', { crashPoint, roundId: this.currentRoundId, roundNumber: this.currentRoundNumber });
 
-    for (const [_, bet] of this.activeBets) {
-      totalBets += bet.amount;
-      if (bet.status === 'ACTIVE') {
-        bet.status = 'LOST';
-        await this.prisma.bet.update({ where: { id: bet.id }, data: { status: 'LOST' } });
-      } else if (bet.cashoutAt) {
-        totalPayouts += bet.winAmount || 0;
+    // DB operations in try-catch
+    try {
+      this.crashFakeBets();
+
+      let totalBets = 0, totalPayouts = 0, totalCommission = 0;
+
+      for (const [_, bet] of this.activeBets) {
+        totalBets += bet.amount;
+        if (bet.status === 'ACTIVE') {
+          bet.status = 'LOST';
+          try {
+            await this.prisma.bet.update({ where: { id: bet.id }, data: { status: 'LOST' } });
+          } catch (e) {
+            this.logger.error(`JetX bet update error: ${e}`);
+          }
+        } else if (bet.cashoutAt) {
+          totalPayouts += bet.winAmount || 0;
+        }
+        try {
+          const settings = await this.settingsService.getSettings();
+          const commission = bet.amount * settings.commissionRate;
+          totalCommission += commission;
+          await this.prisma.bet.update({ where: { id: bet.id }, data: { commission } });
+        } catch (e) {
+          this.logger.error(`JetX commission error: ${e}`);
+        }
       }
-      const settings = await this.settingsService.getSettings();
-      const commission = bet.amount * settings.commissionRate;
-      totalCommission += commission;
-      await this.prisma.bet.update({ where: { id: bet.id }, data: { commission } });
+
+      await this.prisma.gameRound.update({
+        where: { id: this.currentRoundId! },
+        data: { status: 'CRASHED', crashedAt: new Date(), totalBets, totalPayouts, commission: totalCommission },
+      });
+
+      this.history.push({ roundNumber: this.currentRoundNumber, crashPoint, createdAt: new Date().toISOString() });
+      if (this.history.length > 20) this.history.shift();
+
+      this.broadcastBets();
+
+      await this.logsService.log({
+        action: `JetX Round ${this.currentRoundNumber} crashed at ${crashPoint}x`,
+        category: 'GAME',
+        details: { gameType: 'JETX', roundNumber: this.currentRoundNumber, crashPoint, totalBets, totalPayouts, totalCommission },
+      });
+    } catch (e) {
+      this.logger.error(`JetX handleCrash DB error (game loop continues): ${e}`);
     }
 
-    await this.prisma.gameRound.update({
-      where: { id: this.currentRoundId! },
-      data: { status: 'CRASHED', crashedAt: new Date(), totalBets, totalPayouts, commission: totalCommission },
-    });
-
-    this.history.push({ roundNumber: this.currentRoundNumber, crashPoint, createdAt: new Date().toISOString() });
-    if (this.history.length > 20) this.history.shift();
-
-    this.broadcast('jetx:crash', { crashPoint, roundId: this.currentRoundId, roundNumber: this.currentRoundNumber });
-    this.broadcastBets();
-
-    await this.logsService.log({
-      action: `JetX Round ${this.currentRoundNumber} crashed at ${crashPoint}x`,
-      category: 'GAME',
-      details: { gameType: 'JETX', roundNumber: this.currentRoundNumber, crashPoint, totalBets, totalPayouts, totalCommission },
-    });
-
+    // ALWAYS start next round
     setTimeout(() => this.startCountdown(), 4000);
   }
+
 
   // ─── BET HANDLING ────────────────────────────
 

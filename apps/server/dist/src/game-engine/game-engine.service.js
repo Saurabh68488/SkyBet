@@ -242,27 +242,42 @@ let GameEngineService = class GameEngineService {
     async tick() {
         if (this.phase !== 'RUNNING')
             return;
-        const multiplier = this.plugin.getMultiplier();
-        const elapsed = this.plugin.getElapsed();
-        for (const [betId, bet] of this.activeBets) {
-            const autoCashoutVal = bet.autoCashout ? Number(bet.autoCashout) : 0;
-            if (bet.status === 'ACTIVE' &&
-                autoCashoutVal > 0 &&
-                multiplier >= autoCashoutVal) {
-                await this.processCashout(bet.userId, bet.betSlot, autoCashoutVal);
+        try {
+            const multiplier = this.plugin.getMultiplier();
+            const elapsed = this.plugin.getElapsed();
+            for (const [betId, bet] of this.activeBets) {
+                const autoCashoutVal = bet.autoCashout ? Number(bet.autoCashout) : 0;
+                if (bet.status === 'ACTIVE' &&
+                    autoCashoutVal > 0 &&
+                    multiplier >= autoCashoutVal) {
+                    try {
+                        await this.processCashout(bet.userId, bet.betSlot, autoCashoutVal);
+                    }
+                    catch (e) {
+                        this.logger.error(`Auto-cashout error: ${e}`);
+                    }
+                }
             }
+            try {
+                const prevActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
+                this.simulateFakeCashouts(multiplier);
+                const nowActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
+                if (prevActive !== nowActive) {
+                    this.broadcastBets();
+                }
+            }
+            catch (e) {
+                this.logger.error(`Fake cashout error: ${e}`);
+            }
+            if (!this.plugin.isRunning()) {
+                this.handleCrash();
+                return;
+            }
+            this.broadcast('game:tick', { multiplier, elapsed });
         }
-        const prevActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
-        this.simulateFakeCashouts(multiplier);
-        const nowActive = this.fakeBets.filter(b => b.status === 'ACTIVE').length;
-        if (prevActive !== nowActive) {
-            this.broadcastBets();
+        catch (e) {
+            this.logger.error(`Tick error: ${e}`);
         }
-        if (!this.plugin.isRunning()) {
-            this.handleCrash();
-            return;
-        }
-        this.broadcast('game:tick', { multiplier, elapsed });
     }
     async handleCrash() {
         if (this.phase === 'CRASHED')
@@ -271,60 +286,75 @@ let GameEngineService = class GameEngineService {
         if (this.tickInterval)
             clearInterval(this.tickInterval);
         this.tickInterval = null;
-        this.crashFakeBets();
         const crashPoint = this.crashPoint;
         this.logger.log(`Round ${this.currentRoundNumber} CRASHED at ${crashPoint}x`);
-        let totalBets = 0;
-        let totalPayouts = 0;
-        let totalCommission = 0;
-        for (const [betId, bet] of this.activeBets) {
-            totalBets += bet.amount;
-            if (bet.status === 'ACTIVE') {
-                bet.status = 'LOST';
-                await this.prisma.bet.update({
-                    where: { id: bet.id },
-                    data: { status: 'LOST' },
-                });
-            }
-            else if (bet.cashoutAt) {
-                totalPayouts += bet.winAmount || 0;
-            }
-            const settings = await this.settingsService.getSettings();
-            const commission = bet.amount * settings.commissionRate;
-            totalCommission += commission;
-            await this.prisma.bet.update({
-                where: { id: bet.id },
-                data: { commission },
-            });
-        }
-        await this.prisma.gameRound.update({
-            where: { id: this.currentRoundId },
-            data: {
-                status: 'CRASHED',
-                crashedAt: new Date(),
-                totalBets,
-                totalPayouts,
-                commission: totalCommission,
-            },
-        });
-        this.history.push({
-            roundNumber: this.currentRoundNumber,
-            crashPoint,
-            createdAt: new Date().toISOString(),
-        });
-        if (this.history.length > 20)
-            this.history.shift();
         this.broadcast('game:crash', {
             crashPoint,
             roundId: this.currentRoundId,
             roundNumber: this.currentRoundNumber,
         });
-        this.broadcastBets();
-        await this.logsService.log({
-            action: `Round ${this.currentRoundNumber} crashed at ${crashPoint}x`,
-            category: 'GAME',
-            details: { roundNumber: this.currentRoundNumber, crashPoint, totalBets, totalPayouts, totalCommission },
-        });
+        try {
+            this.crashFakeBets();
+            let totalBets = 0;
+            let totalPayouts = 0;
+            let totalCommission = 0;
+            for (const [betId, bet] of this.activeBets) {
+                totalBets += bet.amount;
+                if (bet.status === 'ACTIVE') {
+                    bet.status = 'LOST';
+                    try {
+                        await this.prisma.bet.update({
+                            where: { id: bet.id },
+                            data: { status: 'LOST' },
+                        });
+                    }
+                    catch (e) {
+                        this.logger.error(`Bet update error: ${e}`);
+                    }
+                }
+                else if (bet.cashoutAt) {
+                    totalPayouts += bet.winAmount || 0;
+                }
+                try {
+                    const settings = await this.settingsService.getSettings();
+                    const commission = bet.amount * settings.commissionRate;
+                    totalCommission += commission;
+                    await this.prisma.bet.update({
+                        where: { id: bet.id },
+                        data: { commission },
+                    });
+                }
+                catch (e) {
+                    this.logger.error(`Commission update error: ${e}`);
+                }
+            }
+            await this.prisma.gameRound.update({
+                where: { id: this.currentRoundId },
+                data: {
+                    status: 'CRASHED',
+                    crashedAt: new Date(),
+                    totalBets,
+                    totalPayouts,
+                    commission: totalCommission,
+                },
+            });
+            this.history.push({
+                roundNumber: this.currentRoundNumber,
+                crashPoint,
+                createdAt: new Date().toISOString(),
+            });
+            if (this.history.length > 20)
+                this.history.shift();
+            this.broadcastBets();
+            await this.logsService.log({
+                action: `Round ${this.currentRoundNumber} crashed at ${crashPoint}x`,
+                category: 'GAME',
+                details: { roundNumber: this.currentRoundNumber, crashPoint, totalBets, totalPayouts, totalCommission },
+            });
+        }
+        catch (e) {
+            this.logger.error(`HandleCrash DB error (game loop continues): ${e}`);
+        }
         setTimeout(() => this.startCountdown(), 4000);
     }
     async placeBet(userId, username, amount, betSlot, autoCashout) {

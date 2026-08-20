@@ -101,12 +101,12 @@ export declare class JetXEngineService implements OnModuleInit {
     }>;
     getForcedRounds(): Promise<{
         id: string;
-        createdAt: Date;
-        createdBy: string;
-        gameType: string;
         roundNumber: number;
         crashPoint: import("@prisma/client/runtime/library").Decimal;
+        gameType: string;
         executed: boolean;
+        createdBy: string;
+        createdAt: Date;
     }[]>;
     deleteForcedRound(id: string, adminId: string): Promise<{
         message: string;
