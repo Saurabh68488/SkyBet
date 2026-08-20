@@ -73,7 +73,7 @@ export class GameEngineService implements OnModuleInit {
 
     // Load recent round history
     const recentRounds = await this.prisma.gameRound.findMany({
-      where: { status: 'CRASHED' },
+      where: { status: 'CRASHED', gameType: 'AVIATION' },
       orderBy: { createdAt: 'desc' },
       take: 20,
     });
@@ -85,8 +85,9 @@ export class GameEngineService implements OnModuleInit {
       }))
       .reverse();
 
-    // Get last round number
+    // Get last round number FOR THIS GAME TYPE
     const lastRound = await this.prisma.gameRound.findFirst({
+      where: { gameType: 'AVIATION' },
       orderBy: { roundNumber: 'desc' },
     });
     this.currentRoundNumber = lastRound ? lastRound.roundNumber : 0;
@@ -96,6 +97,7 @@ export class GameEngineService implements OnModuleInit {
     // Start the game loop after a short delay (wait for socket gateway)
     setTimeout(() => this.startCountdown(), 3000);
   }
+
 
   // Called by the gateway to set broadcast functions
   setBroadcast(broadcastFn: (event: string, data: any) => void, sendToUserFn: (userId: string, event: string, data: any) => void) {
@@ -151,18 +153,43 @@ export class GameEngineService implements OnModuleInit {
       crashPoint = Math.floor(crashPoint * 100) / 100;
     }
 
-    const round = await this.prisma.gameRound.create({
-      data: {
-        roundNumber: this.currentRoundNumber,
-        gameType: 'AVIATION',
-        crashPoint,
-        status: 'WAITING',
-        isForced: !!forcedRound,
-      },
-    });
+    let round;
+    try {
+      round = await this.prisma.gameRound.create({
+        data: {
+          roundNumber: this.currentRoundNumber,
+          gameType: 'AVIATION',
+          crashPoint,
+          status: 'WAITING',
+          isForced: !!forcedRound,
+        },
+      });
+    } catch (e: any) {
+      if (e?.code === 'P2002') {
+        // Duplicate round — find the actual max and retry
+        const maxRound = await this.prisma.gameRound.findFirst({
+          where: { gameType: 'AVIATION' },
+          orderBy: { roundNumber: 'desc' },
+        });
+        this.currentRoundNumber = (maxRound?.roundNumber || 0) + 1;
+        this.logger.warn(`Duplicate round detected, jumping to round ${this.currentRoundNumber}`);
+        round = await this.prisma.gameRound.create({
+          data: {
+            roundNumber: this.currentRoundNumber,
+            gameType: 'AVIATION',
+            crashPoint,
+            status: 'WAITING',
+            isForced: !!forcedRound,
+          },
+        });
+      } else {
+        throw e;
+      }
+    }
 
     this.currentRoundId = round.id;
     this.crashPoint = crashPoint;
+
 
     if (forcedRound) {
       await this.prisma.forcedRound.update({
