@@ -86,9 +86,9 @@ export default function JetXPage() {
         </aside>
 
         {/* Center: Canvas + Bet Panels */}
-        <main className="flex-1 flex flex-col min-w-0 min-h-0">
+        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto sm:overflow-hidden">
           {/* Canvas */}
-          <div className="flex-1 relative min-h-[45vh] sm:min-h-0 border border-white/5 rounded-sm m-1 overflow-hidden">
+          <div className="relative h-[30vh] sm:h-auto sm:flex-1 sm:min-h-0 border border-white/5 rounded-sm m-1 overflow-hidden shrink-0">
             {/* Prize fund banner (decoration) */}
             <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-[#1a1a2e]/90 rounded-lg px-2.5 py-1 border border-yellow-500/20">
               <span className="text-[8px] text-yellow-500 font-bold uppercase">Prize Pool</span>
