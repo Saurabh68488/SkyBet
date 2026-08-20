@@ -4,7 +4,7 @@
 
 import { io, Socket } from 'socket.io-client';
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? 'http://localhost:3001';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? '';
 
 let socket: Socket | null = null;
 
@@ -12,14 +12,17 @@ export function getSocket(): Socket {
   if (!socket) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
-    socket = io(WS_URL, {
-      transports: ['websocket', 'polling'],
+    const opts = {
+      transports: ['polling', 'websocket'] as string[],
       auth: { token },
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-    });
+    };
+
+    // Empty string = same-origin: call io() with no URL arg
+    socket = WS_URL ? io(WS_URL, opts) : io(opts);
 
     socket.on('connect', () => {
       console.log('🔌 Connected to SkyBet server');
@@ -58,3 +61,4 @@ export function disconnectSocket() {
     socket = null;
   }
 }
+
