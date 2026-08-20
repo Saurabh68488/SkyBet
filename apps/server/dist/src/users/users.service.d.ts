@@ -16,15 +16,15 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     findAll(options: {
         page?: number;
@@ -37,15 +37,15 @@ export declare class UsersService {
             wallet: {
                 balance: number;
             } | null;
+            status: string;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
             name: string;
             username: string;
             phone: string | null;
             role: string;
-            status: string;
             playerId: string;
-            updatedAt: Date;
         }[];
         total: number;
         page: number;
@@ -55,15 +55,15 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     updateUser(id: string, data: {
         name?: string;
@@ -73,15 +73,15 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{
         message: string;

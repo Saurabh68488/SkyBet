@@ -47,15 +47,15 @@ export declare class AdminController {
             wallet: {
                 balance: number;
             } | null;
+            status: string;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
             name: string;
             username: string;
             phone: string | null;
             role: string;
-            status: string;
             playerId: string;
-            updatedAt: Date;
         }[];
         total: number;
         page: number;
@@ -65,29 +65,29 @@ export declare class AdminController {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     updateUser(id: string, body: any, req: any): Promise<{
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     toggleUserStatus(id: string, req: any): Promise<{
         id: string;
@@ -116,11 +116,11 @@ export declare class AdminController {
             amount: number;
             balanceBefore: number;
             balanceAfter: number;
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
-            type: string;
             walletId: string;
+            type: string;
             referenceId: string | null;
             note: string | null;
             createdBy: string | null;
@@ -139,10 +139,10 @@ export declare class AdminController {
         crashPoint: number;
         id: string;
         createdAt: Date;
-        createdBy: string;
-        gameType: string;
         roundNumber: number;
+        gameType: string;
         executed: boolean;
+        createdBy: string;
     }[]>;
     deleteForcedRound(id: string, req: any): Promise<{
         message: string;
@@ -157,10 +157,10 @@ export declare class AdminController {
         crashPoint: number;
         id: string;
         createdAt: Date;
-        createdBy: string;
-        gameType: string;
         roundNumber: number;
+        gameType: string;
         executed: boolean;
+        createdBy: string;
     }[]>;
     jetxDeleteForcedRound(id: string, req: any): Promise<{
         message: string;
@@ -173,12 +173,12 @@ export declare class AdminController {
                 username: string;
             } | null;
             id: string;
-            action: string;
+            userId: string | null;
+            createdAt: Date;
             category: string;
+            action: string;
             ip: string | null;
             userAgent: string | null;
-            createdAt: Date;
-            userId: string | null;
         }[];
         total: number;
         page: number;

@@ -6,15 +6,15 @@ export declare class UsersController {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     }>;
     changePassword(req: any, body: {
         currentPassword: string;

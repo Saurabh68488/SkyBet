@@ -17,16 +17,16 @@ export declare class AuthController {
             wallet: {
                 balance: number;
             } | null;
+            status: string;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
             name: string;
             username: string;
             plainPassword: string | null;
             phone: string | null;
             role: string;
-            status: string;
             playerId: string;
-            updatedAt: Date;
         };
     }>;
     refresh(body: RefreshDto): Promise<{
@@ -41,16 +41,16 @@ export declare class AuthController {
         wallet: {
             balance: number;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         plainPassword: string | null;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
         error?: undefined;
     }>;
 }

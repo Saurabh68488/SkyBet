@@ -31,11 +31,11 @@ export declare class AdminService {
             amount: number;
             balanceBefore: number;
             balanceAfter: number;
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
-            type: string;
             walletId: string;
+            type: string;
             referenceId: string | null;
             note: string | null;
             createdBy: string | null;

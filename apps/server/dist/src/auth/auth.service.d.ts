@@ -15,16 +15,16 @@ export declare class AuthService {
             wallet: {
                 balance: number;
             } | null;
+            status: string;
             id: string;
             createdAt: Date;
+            updatedAt: Date;
             name: string;
             username: string;
             plainPassword: string | null;
             phone: string | null;
             role: string;
-            status: string;
             playerId: string;
-            updatedAt: Date;
         };
     }>;
     refreshToken(token: string): Promise<{
@@ -38,15 +38,15 @@ export declare class AuthService {
             updatedAt: Date;
             balance: import("@prisma/client/runtime/library").Decimal;
         } | null;
+        status: string;
         id: string;
         createdAt: Date;
+        updatedAt: Date;
         name: string;
         username: string;
         plainPassword: string | null;
         phone: string | null;
         role: string;
-        status: string;
         playerId: string;
-        updatedAt: Date;
     } | null>;
 }

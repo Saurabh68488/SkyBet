@@ -15,16 +15,16 @@ export declare class BetsService {
             commission: number;
             round: {
                 crashPoint: number;
-                gameType: string;
                 roundNumber: number;
+                gameType: string;
             } | null;
-            id: string;
-            createdAt: Date;
-            userId: string;
             status: string;
-            updatedAt: Date;
+            id: string;
+            userId: string;
             roundId: string;
             betSlot: number;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
         total: number;
         page: number;
@@ -40,11 +40,11 @@ export declare class BetsService {
             totalBets: number;
             totalPayouts: number;
             commission: number;
+            status: string;
             id: string;
             createdAt: Date;
-            status: string;
-            gameType: string;
             roundNumber: number;
+            gameType: string;
             isForced: boolean;
             startedAt: Date | null;
             crashedAt: Date | null;

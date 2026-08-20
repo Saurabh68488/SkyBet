@@ -100,11 +100,11 @@ export declare class GameEngineService implements OnModuleInit {
     getForcedRounds(): Promise<{
         id: string;
         createdAt: Date;
-        createdBy: string;
-        gameType: string;
         roundNumber: number;
+        gameType: string;
         crashPoint: import("@prisma/client/runtime/library").Decimal;
         executed: boolean;
+        createdBy: string;
     }[]>;
     deleteForcedRound(id: string, adminId: string): Promise<{
         message: string;
