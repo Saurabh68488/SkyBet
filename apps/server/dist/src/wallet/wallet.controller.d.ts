@@ -10,14 +10,14 @@ export declare class WalletController {
             amount: number;
             balanceBefore: number;
             balanceAfter: number;
-            status: string;
             id: string;
-            createdAt: Date;
             walletId: string;
             type: string;
+            status: string;
             referenceId: string | null;
             note: string | null;
             createdBy: string | null;
+            createdAt: Date;
         }[];
         total: number;
         page: number;

@@ -26,10 +26,10 @@ export declare class LogsService {
                 username: string;
             } | null;
             id: string;
-            userId: string | null;
             createdAt: Date;
-            category: string;
+            userId: string | null;
             action: string;
+            category: string;
             ip: string | null;
             userAgent: string | null;
         }[];

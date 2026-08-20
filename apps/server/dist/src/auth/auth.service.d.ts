@@ -15,11 +15,11 @@ export declare class AuthService {
             wallet: {
                 balance: number;
             } | null;
-            status: string;
             id: string;
+            status: string;
             createdAt: Date;
-            updatedAt: Date;
             name: string;
+            updatedAt: Date;
             username: string;
             plainPassword: string | null;
             phone: string | null;
@@ -34,15 +34,15 @@ export declare class AuthService {
     validateUser(userId: string): Promise<{
         wallet: {
             id: string;
-            userId: string;
             updatedAt: Date;
+            userId: string;
             balance: import("@prisma/client/runtime/library").Decimal;
         } | null;
-        status: string;
         id: string;
+        status: string;
         createdAt: Date;
-        updatedAt: Date;
         name: string;
+        updatedAt: Date;
         username: string;
         plainPassword: string | null;
         phone: string | null;

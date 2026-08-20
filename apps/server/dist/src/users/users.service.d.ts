@@ -16,11 +16,11 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
-        status: string;
         id: string;
+        status: string;
         createdAt: Date;
-        updatedAt: Date;
         name: string;
+        updatedAt: Date;
         username: string;
         phone: string | null;
         role: string;
@@ -37,11 +37,11 @@ export declare class UsersService {
             wallet: {
                 balance: number;
             } | null;
-            status: string;
             id: string;
+            status: string;
             createdAt: Date;
-            updatedAt: Date;
             name: string;
+            updatedAt: Date;
             username: string;
             phone: string | null;
             role: string;
@@ -55,11 +55,11 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
-        status: string;
         id: string;
+        status: string;
         createdAt: Date;
-        updatedAt: Date;
         name: string;
+        updatedAt: Date;
         username: string;
         phone: string | null;
         role: string;
@@ -73,11 +73,11 @@ export declare class UsersService {
         wallet: {
             balance: number;
         } | null;
-        status: string;
         id: string;
+        status: string;
         createdAt: Date;
-        updatedAt: Date;
         name: string;
+        updatedAt: Date;
         username: string;
         phone: string | null;
         role: string;

@@ -18,13 +18,13 @@ export declare class BetsService {
                 roundNumber: number;
                 gameType: string;
             } | null;
-            status: string;
             id: string;
+            status: string;
+            createdAt: Date;
+            updatedAt: Date;
             userId: string;
             roundId: string;
             betSlot: number;
-            createdAt: Date;
-            updatedAt: Date;
         }[];
         total: number;
         page: number;
@@ -40,8 +40,8 @@ export declare class BetsService {
             totalBets: number;
             totalPayouts: number;
             commission: number;
-            status: string;
             id: string;
+            status: string;
             createdAt: Date;
             roundNumber: number;
             gameType: string;

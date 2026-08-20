@@ -7,6 +7,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
+import * as express from 'express';
+import * as path from 'path';
+import * as fs from 'fs';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,7 +20,7 @@ async function bootstrap() {
 
   // CORS - allow frontend
   app.enableCors({
-    origin: true, // Allow all origins in dev; restrict in production via env
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   });
@@ -44,6 +47,27 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
+  // Serve static frontend files
+  const frontendPath = path.resolve(process.cwd(), 'apps/web/out');
+  if (fs.existsSync(frontendPath)) {
+    app.use(express.static(frontendPath, { maxAge: '1d' }));
+
+    // Catch-all: serve index.html for client-side routing
+    // (must come after all API routes)
+    app.use((req: any, res: any, next: any) => {
+      if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/')) {
+        return next();
+      }
+      const indexFile = path.join(frontendPath, 'index.html');
+      if (fs.existsSync(indexFile)) {
+        res.sendFile(indexFile);
+      } else {
+        next();
+      }
+    });
+    console.log('📁 Serving frontend from apps/web/out');
+  }
+
   const port = process.env.PORT || 3001;
   await app.listen(port);
 
@@ -66,3 +90,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+
