@@ -1,54 +1,54 @@
 #!/bin/bash
 # ============================================
-# SkyBet Deployment Script for Plesk/CloudLinux
+# SkyBet Deploy Script — CloudLinux/Plesk
+# Run: bash deploy.sh
 # ============================================
 set -e
 
 export PATH=/opt/plesk/node/25/bin:$PATH
-APP_DIR="/var/www/vhosts/skybetall.com/httpdocs"
+APP_DIR="$(pwd)"
 
-echo "=== Step 1: Install dependencies ==="
-cd "$APP_DIR"
-npm install --ignore-scripts 2>/dev/null || true
+echo "=== 1/5 Installing dependencies ==="
+npm install --ignore-scripts
 
-echo "=== Step 2: Compile better-sqlite3 ==="
-cd "$APP_DIR/node_modules/better-sqlite3"
-npx node-gyp rebuild --python=/opt/alt/python310/bin/python3.10 2>/dev/null || \
-npx node-gyp rebuild 2>/dev/null || echo "WARN: node-gyp failed, using prebuilds"
+echo "=== 2/5 Building better-sqlite3 ==="
+cd node_modules/better-sqlite3
+npx node-gyp rebuild --python=/opt/alt/python310/bin/python3.10 || npx node-gyp rebuild || echo "WARN: using prebuilds"
 cd "$APP_DIR"
 
-echo "=== Step 3: Fix nested better-sqlite3 ==="
-if [ -d "node_modules/@prisma/adapter-better-sqlite3/node_modules/better-sqlite3" ]; then
+echo "=== 3/5 Fixing symlinks ==="
+# Symlink better-sqlite3 into adapter
+if [ -d "node_modules/@prisma/adapter-better-sqlite3/node_modules" ]; then
   rm -rf node_modules/@prisma/adapter-better-sqlite3/node_modules/better-sqlite3
   ln -s "$APP_DIR/node_modules/better-sqlite3" \
     node_modules/@prisma/adapter-better-sqlite3/node_modules/better-sqlite3
-  echo "Symlinked adapter better-sqlite3"
+  echo "  -> adapter better-sqlite3 symlinked"
 fi
 
-echo "=== Step 4: Fix nested @prisma/client ==="
-if [ -d "apps/server/node_modules/@prisma/client" ] && [ ! -L "apps/server/node_modules/@prisma/client" ]; then
-  rm -rf apps/server/node_modules/@prisma/client
-  mkdir -p apps/server/node_modules/@prisma
-  ln -s "$APP_DIR/node_modules/@prisma/client" \
-    apps/server/node_modules/@prisma/client
-  echo "Symlinked server @prisma/client"
-fi
+# Symlink @prisma/client into server
+mkdir -p apps/server/node_modules/@prisma
+rm -rf apps/server/node_modules/@prisma/client
+ln -s "$APP_DIR/node_modules/@prisma/client" \
+  apps/server/node_modules/@prisma/client
+echo "  -> server @prisma/client symlinked"
 
-echo "=== Step 5: Generate Prisma client ==="
+echo "=== 4/5 Generating Prisma ==="
 npx prisma generate --schema apps/server/prisma/schema.prisma
 
-echo "=== Step 6: Kill old process ==="
+echo "=== 5/5 Starting server ==="
 pkill -f "apps/server/dist/src/main.js" 2>/dev/null || true
-sleep 2
-
-echo "=== Step 7: Start server ==="
+sleep 1
 nohup /opt/plesk/node/25/bin/node apps/server/dist/src/main.js >> backend.log 2>&1 &
-echo "Server started with PID: $!"
-
+echo "PID: $!"
 sleep 3
+
 if pgrep -f "apps/server/dist/src/main.js" > /dev/null; then
-  echo "=== SUCCESS: Server is running! ==="
+  echo ""
+  echo "========================================="
+  echo "  SUCCESS! Server is running!"
+  echo "  API: http://skybetall.com/api/docs"
+  echo "========================================="
 else
-  echo "=== FAILED: Check backend.log ==="
+  echo "FAILED — check backend.log:"
   tail -20 backend.log
 fi
