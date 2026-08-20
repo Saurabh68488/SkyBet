@@ -38,7 +38,7 @@ npx prisma generate --schema apps/server/prisma/schema.prisma
 echo "=== 5/5 Starting server ==="
 pkill -f "apps/server/dist/src/main.js" 2>/dev/null || true
 sleep 1
-nohup /opt/plesk/node/25/bin/node apps/server/dist/src/main.js >> backend.log 2>&1 &
+nohup /opt/plesk/node/25/bin/node --experimental-wasm-modules apps/server/dist/src/main.js >> backend.log 2>&1 &
 echo "PID: $!"
 sleep 3
 
