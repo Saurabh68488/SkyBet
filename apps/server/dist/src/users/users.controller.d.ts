@@ -7,14 +7,14 @@ export declare class UsersController {
             balance: number;
         } | null;
         id: string;
-        status: string;
         createdAt: Date;
         name: string;
-        updatedAt: Date;
         username: string;
         phone: string | null;
         role: string;
+        status: string;
         playerId: string;
+        updatedAt: Date;
     }>;
     changePassword(req: any, body: {
         currentPassword: string;

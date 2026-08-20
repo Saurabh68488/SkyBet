@@ -11,14 +11,14 @@ export declare class BetsController {
             commission: number;
             round: {
                 crashPoint: number;
-                roundNumber: number;
                 gameType: string;
+                roundNumber: number;
             } | null;
             id: string;
-            status: string;
             createdAt: Date;
-            updatedAt: Date;
             userId: string;
+            status: string;
+            updatedAt: Date;
             roundId: string;
             betSlot: number;
         }[];
@@ -33,10 +33,10 @@ export declare class BetsController {
             totalPayouts: number;
             commission: number;
             id: string;
-            status: string;
             createdAt: Date;
-            roundNumber: number;
+            status: string;
             gameType: string;
+            roundNumber: number;
             isForced: boolean;
             startedAt: Date | null;
             crashedAt: Date | null;

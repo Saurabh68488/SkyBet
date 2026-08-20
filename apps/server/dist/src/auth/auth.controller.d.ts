@@ -18,15 +18,15 @@ export declare class AuthController {
                 balance: number;
             } | null;
             id: string;
-            status: string;
             createdAt: Date;
             name: string;
-            updatedAt: Date;
             username: string;
             plainPassword: string | null;
             phone: string | null;
             role: string;
+            status: string;
             playerId: string;
+            updatedAt: Date;
         };
     }>;
     refresh(body: RefreshDto): Promise<{
@@ -42,15 +42,15 @@ export declare class AuthController {
             balance: number;
         } | null;
         id: string;
-        status: string;
         createdAt: Date;
         name: string;
-        updatedAt: Date;
         username: string;
         plainPassword: string | null;
         phone: string | null;
         role: string;
+        status: string;
         playerId: string;
+        updatedAt: Date;
         error?: undefined;
     }>;
 }

@@ -15,13 +15,13 @@ export declare class WalletService {
             balanceBefore: number;
             balanceAfter: number;
             id: string;
-            walletId: string;
-            type: string;
+            createdAt: Date;
             status: string;
+            type: string;
+            walletId: string;
             referenceId: string | null;
             note: string | null;
             createdBy: string | null;
-            createdAt: Date;
         }[];
         total: number;
         page: number;
